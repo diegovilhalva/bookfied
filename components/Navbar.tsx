@@ -11,6 +11,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
+import { SignedIn, SignedOut, SignInButton, UserButton, useUser } from "@clerk/nextjs"
 
 const navItems = [
   { label: "Library", href: "/" },
@@ -20,19 +21,21 @@ const navItems = [
 
 const Navbar = () => {
   const pathName = usePathname()
+  const { user } = useUser()
 
   return (
     <header className="w-full fixed z-50 bg-background/80 backdrop-blur-md border-b border-(--border-subtle)">
       <div className="wrapper navbar-height py-4 flex justify-between items-center">
-        
+
         {/* Logo */}
         <Link href="/" className="flex gap-0.5 items-center">
-          <Image src="/assets/logo.png" alt="Bookfied" width={42} height={26} />
+          <Image src="/assets/logo.png" alt="Bookfied" className="fill-primary" width={42} height={26} />
           <span className="logo-text">Bookfied</span>
         </Link>
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex gap-7.5 items-center">
+
           {navItems.map(({ label, href }) => {
             const isActive =
               pathName === href ||
@@ -53,6 +56,19 @@ const Navbar = () => {
               </Link>
             )
           })}
+          <SignedOut>
+            <SignInButton mode="modal" />
+          </SignedOut>
+          <SignedIn>
+            <div className="nav-user-link">
+              <UserButton />
+              {user?.firstName && (
+                <Link href="/subscriptions" className="nav-user-name">
+                  {user.firstName}
+                </Link>
+              )}
+            </div>
+          </SignedIn>
         </nav>
 
         {/* Mobile Menu */}
@@ -86,9 +102,29 @@ const Navbar = () => {
                     </Link>
                   )
                 })}
+                <div className="border-t border-(--border-subtle) pt-6 mt-6">
+                  <SignedOut>
+                    <SignInButton mode="modal">
+                      <Button className="w-full">
+                        Sign In
+                      </Button>
+                    </SignInButton>
+                  </SignedOut>
+
+                  <SignedIn>
+                    <div className="flex items-center gap-3">
+                      <UserButton />
+                      <span className="font-medium">
+                        {user?.firstName}
+                      </span>
+                    </div>
+                  </SignedIn>
+                </div>
               </div>
+
             </SheetContent>
           </Sheet>
+
         </div>
       </div>
     </header>
