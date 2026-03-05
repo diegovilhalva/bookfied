@@ -1,4 +1,4 @@
-
+"use client"
 import BookCard from '@/components/BookCard'
 import HeroSection from '@/components/HeroSection'
 import Search from '@/components/Search'
