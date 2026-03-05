@@ -5,6 +5,8 @@ import Search from '@/components/Search'
 import { getAllBooks } from '@/lib/actions/book.actions'
 //import { sampleBooks } from '@/lib/constants'
 //import { useSearchParams } from 'next/navigation'
+export const dynamic = "force-dynamic"
+
 
 const Page = async() => {
   
