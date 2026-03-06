@@ -1,17 +1,17 @@
 'use client';
 
 import {Mic, MicOff} from "lucide-react";
-//import useVapi from "@/hooks/useVapi";
+import useVapi from "@/hooks/useVapi";
 import {IBook} from "@/types";
 import Image from "next/image";
-//import Transcript from "@/components/Transcript";
+import Transcript from "@/components/Transcript";
 import {toast} from "sonner";
 
 import {useRouter} from "next/navigation";
 import {useEffect} from "react";
 
 const VapiControls = ({ book }: { book: IBook }) => {
-   /* const { status, isActive, messages, currentMessage, currentUserMessage, duration, start, stop, clearError, limitError, isBillingError, maxDurationSeconds } = useVapi(book) */
+    const { status, isActive, messages, currentMessage, currentUserMessage, duration, start, stop, clearError, limitError, } = useVapi(book) 
     const router = useRouter();
 
   /*  useEffect(() => {
@@ -60,20 +60,20 @@ const VapiControls = ({ book }: { book: IBook }) => {
                             priority
                         />
                         <div className="vapi-mic-wrapper relative">
-                          {/*  {isActive && (status === 'speaking' || status === 'thinking') && (
+                            {isActive && (status === 'speaking' || status === 'thinking') && (
                                 <div className="absolute inset-0 rounded-full bg-white animate-ping opacity-75" />
-                            )} */}
-                            {/*<button
+                            )} 
+                            <button
                                 onClick={isActive ? stop : start}
                                 disabled={status === 'connecting'}
-                                className={`vapi-mic-btn shadow-md !w-[60px] !h-[60px] z-10 ${isActive ? 'vapi-mic-btn-active' : 'vapi-mic-btn-inactive'}`}
+                                className={`vapi-mic-btn shadow-md w-[60px]! h-[60px]! z-10 ${isActive ? 'vapi-mic-btn-active' : 'vapi-mic-btn-inactive'}`}
                             >
                                 {isActive ? (
                                     <Mic className="size-7 text-white" />
                                 ) : (
                                     <MicOff className="size-7 text-[#212a3b]" />
                                 )}
-                            </button>*/}
+                            </button>
                         </div>
                     </div>
 
@@ -97,7 +97,7 @@ const VapiControls = ({ book }: { book: IBook }) => {
 
                             <div className="vapi-status-indicator">
                                 <span className="vapi-status-text">
-                                    {/*{formatDuration(duration)}/{formatDuration(maxDurationSeconds)}*/}
+                                    {formatDuration(duration)}/{formatDuration(900)}
                                 </span>
                             </div>
                         </div>
@@ -106,11 +106,11 @@ const VapiControls = ({ book }: { book: IBook }) => {
 
             <div className="vapi-transcript-wrapper">
                 <div className="transcript-container min-h-[400px]">
-                  {/*  <Transcript
+                    <Transcript
                         messages={messages}
                         currentMessage={currentMessage}
                         currentUserMessage={currentUserMessage}
-                    />*/}
+                    />
                 </div>
             </div>
             </div>
