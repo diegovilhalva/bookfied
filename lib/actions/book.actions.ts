@@ -1,12 +1,12 @@
-"use server"
+'use server';
 
-import { connectToDatabase } from "@/database/mongoose"
-import { CreateBook, TextSegment } from "@/types"
-import { escapeRegex, generateSlug, serializeData } from "../utils"
-import Book from "@/database/models/book.model"
-import BookSegment from "@/database/models/book-segment.model"
-import mongoose from "mongoose"
-
+import {CreateBook, TextSegment} from "@/types";
+import {connectToDatabase} from "@/database/mongoose";
+import {escapeRegex, generateSlug, serializeData} from "@/lib/utils";
+import Book from "@/database/models/book.model";
+import BookSegment from "@/database/models/book-segment.model";
+import mongoose from "mongoose";
+import { getUserPlan } from "../subscription.server"
 
 export const getAllBooks = async (search?: string) => {
     try {
@@ -39,6 +39,91 @@ export const getAllBooks = async (search?: string) => {
     }
 }
 
+export const checkBookExists = async (title: string) => {
+    try {
+        await connectToDatabase();
+
+        const slug = generateSlug(title);
+
+        const existingBook = await Book.findOne({slug}).lean();
+
+        if(existingBook) {
+            return {
+                exists: true,
+                book: serializeData(existingBook)
+            }
+        }
+
+        return {
+            exists: false,
+        }
+    } catch (e) {
+        console.error('Error checking book exists', e);
+        return {
+            exists: false, error: e
+        }
+    }
+}
+
+export const createBook = async (data: CreateBook) => {
+    try {
+        await connectToDatabase();
+
+        const slug = generateSlug(data.title);
+
+        const existingBook = await Book.findOne({slug}).lean();
+
+        if(existingBook) {
+            return {
+                success: true,
+                data: serializeData(existingBook),
+                alreadyExists: true,
+            }
+        }
+
+        // Todo: Check subscription limits before creating a book
+        const { getUserPlan } = await import("@/lib/subscription.server");
+        const { PLAN_LIMITS } = await import("@/lib/subscriptions-constants");
+
+        const { auth } = await import("@clerk/nextjs/server");
+        const { userId } = await auth();
+
+        if (!userId || userId !== data.clerkId) {
+            return { success: false, error: "Unauthorized" };
+        }
+
+        const plan = await getUserPlan();
+        const limits = PLAN_LIMITS[plan];
+
+        const bookCount = await Book.countDocuments({ clerkId: userId });
+
+        if (bookCount >= limits.maxBooks) {
+            const { revalidatePath } = await import("next/cache");
+            revalidatePath("/");
+
+            return {
+                success: false,
+                error: `You have reached the maximum number of books allowed for your ${plan} plan (${limits.maxBooks}). Please upgrade to add more books.`,
+                isBillingError: true,
+            };
+        }
+
+        const book = await Book.create({...data, clerkId: userId, slug, totalSegments: 0});
+
+        return {
+            success: true,
+            data: serializeData(book),
+        }
+    } catch (e) {
+        console.error('Error creating a book', e);
+
+        return {
+            success: false,
+            error: e,
+        }
+    }
+}
+
 export const getBookBySlug = async (slug: string) => {
     try {
         await connectToDatabase();
@@ -61,73 +146,12 @@ export const getBookBySlug = async (slug: string) => {
     }
 }
 
-export const checkBookExists = async (title: string) => {
-    try {
-
-        await connectToDatabase()
-
-        const slug = generateSlug(title)
-
-        const existingBook = await Book.findOne({ slug }).lean()
-
-        if (existingBook) {
-            return {
-                exists: true,
-                book: serializeData(existingBook)
-            }
-        }
-
-        return {
-            exists: false,
-        }
-    } catch (error) {
-        console.error('Error checking book exists', error);
-        return {
-            exists: false, error: error
-        }
-    }
-}
-
-
-
-export const createBook = async (data: CreateBook) => {
-    try {
-        await connectToDatabase()
-        const slug = generateSlug(data.title)
-
-        const existingBook = await Book.findOne({ slug }).lean()
-
-        if (existingBook) {
-            return {
-                success: true,
-                data: serializeData(existingBook),
-                alreadyExists: true,
-            }
-        }
-
-        // Todo: Check subscription limits before creating a book
-
-        const book = await Book.create({ ...data, slug, totalSegments: 0 });
-
-        return {
-            success: true,
-            data: serializeData(book),
-        }
-    } catch (error) {
-        console.error('Error creating a book', error);
-
-        return {
-            success: false,
-            error: error,
-        }
-    }
-}
-
-
-
 export const saveBookSegments = async (bookId: string, clerkId: string, segments: TextSegment[]) => {
     try {
         await connectToDatabase();
+
+        console.log('Saving book segments...');
+
         const segmentsToInsert = segments.map(({ text, segmentIndex, pageNumber, wordCount }) => ({
             clerkId, bookId, content: text, segmentIndex, pageNumber, wordCount
         }));
@@ -136,20 +160,23 @@ export const saveBookSegments = async (bookId: string, clerkId: string, segments
 
         await Book.findByIdAndUpdate(bookId, { totalSegments: segments.length });
 
+        console.log('Book segments saved successfully.');
+
         return {
             success: true,
-            data: { segmentsCreated: segments.length }
+            data: { segmentsCreated: segments.length}
         }
-    } catch (error) {
-        console.error('Error saving book segments', error);
+    } catch (e) {
+        console.error('Error saving book segments', e);
 
         return {
             success: false,
-            error: error
+            error: e,
         }
     }
 }
 
+// Searches book segments using MongoDB text search with regex fallback
 export const searchBookSegments = async (bookId: string, query: string, limit: number = 5) => {
     try {
         await connectToDatabase();
