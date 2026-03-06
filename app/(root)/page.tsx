@@ -3,21 +3,16 @@ import BookCard from '@/components/BookCard'
 import HeroSection from '@/components/HeroSection'
 import Search from '@/components/Search'
 import { getAllBooks } from '@/lib/actions/book.actions'
-//import { sampleBooks } from '@/lib/constants'
-//import { useSearchParams } from 'next/navigation'
 export const dynamic = "force-dynamic"
 
 
-const Page = async() => {
-  
+const Page = async ({ searchParams }: { searchParams: Promise<{ query?: string }> }) => {
+  const { query } = await searchParams;
 
-  const bookResults = await getAllBooks()
-  const books = bookResults.success  ? bookResults.data ?? [] : []
+  const bookResults = await getAllBooks(query)
+  const books = bookResults.success ? bookResults.data ?? [] : []
 
-  /*const filteredBooks = books.filter(book =>
-    book.title.toLowerCase().includes(query) ||
-    book.author.toLowerCase().includes(query)
-  )*/
+
   return (
     <main className="wrapper  container">
       <HeroSection />
