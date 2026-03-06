@@ -953,3 +953,12 @@ button[data-variant='unstyled'] *,
   border-radius: 0.75rem;
   font-size: 1.125rem;
 }
+
+.clerk-pricing-container {
+  --cl-color-primary: var(--primary);
+  --cl-color-text: var(--foreground);
+  --cl-color-background: var(--background);
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
