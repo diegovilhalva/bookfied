@@ -1,36 +1,174 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📚 Bookfied
 
-## Getting Started
+**Bookfied** is an AI-powered platform that lets you **talk with books using voice**.
+Upload a book and start a natural conversation with it — ask questions, explore ideas, or study complex topics interactively.
 
-First, run the development server:
+The platform combines **AI voice conversations, semantic search, and document understanding** to create a new way of reading and learning.
+
+🌐 Live App: https://bookfied.vercel.app
+💻 Repository: https://github.com/diegovilhalva/bookfied
+
+---
+
+# ✨ Features
+
+* 📖 Upload and explore books
+* 🎙️ Voice conversations with books
+* 🔎 Search books by title or author
+* 🧠 AI-powered semantic understanding
+* 📚 Intelligent book segmentation for contextual responses
+* 👤 Authentication and user management
+* 💳 Subscription plans and billing
+* 🎭 Multiple AI voice personas
+* ⚡ Fast server-side rendering with Next.js
+
+---
+
+# 🎙️ AI Voice Personas
+
+Bookfied offers different voice personalities for conversations:
+
+* **Dave** — Young male, British (Essex), casual & conversational
+* **Daniel** — Middle-aged male, British, authoritative but warm
+* **Chris** — Male, casual & easy-going
+* **Rachel** — Young female, American, calm & clear
+* **Sarah** — Young female, American, soft & approachable
+
+These personas allow users to customize how they interact with books.
+
+---
+
+# 🧠 How It Works
+
+1. A user uploads a book.
+2. The book is processed and divided into **text segments**.
+3. When the user asks a question:
+
+   * relevant segments are retrieved from the database
+   * the AI uses this context to generate a response.
+4. The response is delivered **as voice using AI speech synthesis**.
+
+This enables **interactive conversations with the content of the book**.
+
+---
+
+# 🛠️ Tech Stack
+
+**Frontend**
+
+* Next.js (App Router)
+* TypeScript
+* Tailwind CSS
+* ShadCN UI
+
+**Backend**
+
+* Node.js
+* MongoDB
+
+**Authentication & Billing**
+
+* Clerk
+
+**AI & Voice**
+
+* Vapi
+* ElevenLabs
+
+**File Storage**
+
+* Vercel Blob
+
+**Deployment**
+
+* Vercel
+
+---
+
+# ⚙️ Environment Variables
+
+Create a `.env.local` file and add the following variables:
+
+```env
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+CLERK_SECRET_KEY=
+
+MONGODB_URI=
+
+READ_WRITE_TOKEN=
+
+NEXT_PUBLIC_ASSISTANT_ID=
+NEXT_PUBLIC_VAPI_API_KEY=
+```
+
+---
+
+# 🚀 Getting Started
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/diegovilhalva/bookfied.git
+cd bookfied
+```
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+### 3. Configure environment variables
+
+Create a `.env.local` file and add the variables listed above.
+
+### 4. Run the development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+# 📦 Deployment
 
-To learn more about Next.js, take a look at the following resources:
+This project is designed to be deployed on **Vercel**.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Steps:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Push your repository to GitHub
+2. Import the project into Vercel
+3. Add the environment variables
+4. Deploy
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# 📚 Use Cases
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Bookfied can be used for:
+
+* 📖 Interactive reading
+* 🎓 Academic study
+* 🧠 Understanding complex books
+* 💬 Exploring ideas through conversation
+* 📚 Research and learning
+
+---
+
+# 👨‍💻 Author
+
+**Diego Vilhalva**
+
+GitHub: https://github.com/diegovilhalva
+
+---
+
+# 📄 License
+
+This project is open source and available under the MIT License.
